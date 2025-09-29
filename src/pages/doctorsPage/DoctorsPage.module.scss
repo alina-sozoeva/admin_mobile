@@ -1,0 +1,22 @@
+.recipeTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+  th,
+  td {
+    padding: 2px 4px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+  th {
+    background: #f9f9f9;
+  }
+
+  svg {
+    font-size: 18px;
+  }
+}
+
+.search {
+  background-color: var(--grey-color);
+}

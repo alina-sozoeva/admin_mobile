@@ -1,0 +1,17 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: var(--grey-color);
+
+  h2 {
+    font-size: 18px;
+  }
+
+  :global {
+    .ant-dropdown-trigger,
+    .ant-dropdown-open {
+      height: 20px !important;
+    }
+  }
+}
