@@ -2,6 +2,10 @@
   display: flex;
   gap: 10px;
   align-items: start;
+
+  svg {
+    font-size: 16px;
+  }
 }
 
 .recipeTable {
@@ -12,7 +16,7 @@
   th,
   td {
     padding: 2px 4px;
-    border-bottom: 1px solid #eee;
+    border: 1px solid #eee;
     text-align: left;
   }
   th {
@@ -20,7 +24,7 @@
   }
 
   svg {
-    font-size: 18px;
+    font-size: 16px;
   }
 }
 

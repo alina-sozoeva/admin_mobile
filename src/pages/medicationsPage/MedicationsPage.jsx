@@ -3,6 +3,7 @@ import { Flex, Form, Input, Select, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
+  EditOutlined,
   PlusOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
@@ -12,6 +13,7 @@ import { useForm } from "antd/es/form/Form";
 
 import styles from "./MedicationsPage.module.scss";
 import clsx from "clsx";
+import { EditModal, MedModal } from "../../components";
 
 export const MedicationsPage = () => {
   const [form] = useForm();
@@ -33,7 +35,26 @@ export const MedicationsPage = () => {
   const [selectedGroup, setSelectedGroup] = useState("0");
   const [open, setOpen] = useState(false);
 
-  const treeData = groups.map((g) => ({ title: g.title, key: g.key }));
+  const [addMed, setAddMed] = useState(false);
+  const [editMed, setEditMed] = useState(false);
+
+  const addMedBtn = () => {
+    setAddMed(false);
+    form.resetFields();
+  };
+
+  const treeData = groups.map((g) => ({
+    title: (
+      <Flex className={clsx("gap-[5px]")}>
+        {g.title}{" "}
+        <EditOutlined
+          className={clsx("text-blue ")}
+          onClick={() => setEditMed(true)}
+        />
+      </Flex>
+    ),
+    key: g.key,
+  }));
 
   const onSelect = (selectedKeys) => {
     if (selectedKeys.length > 0) {
@@ -42,13 +63,6 @@ export const MedicationsPage = () => {
   };
 
   const dataSource = allMedications.filter((m) => m.groupKey === selectedGroup);
-
-  const [addMed, setAddMed] = useState(false);
-
-  const addMedBtn = () => {
-    setAddMed(false);
-    form.resetFields();
-  };
 
   return (
     <main className={styles.main}>
@@ -63,7 +77,7 @@ export const MedicationsPage = () => {
             />
           </Tooltip>
         </Flex>
-        {addMed && (
+        {/* {addMed && (
           <Flex className={clsx("px-2")}>
             <Form
               form={form}
@@ -95,7 +109,7 @@ export const MedicationsPage = () => {
               </Flex>
             </Form>
           </Flex>
-        )}
+        )} */}
 
         <Tree
           showLine
@@ -161,6 +175,8 @@ export const MedicationsPage = () => {
         open={open}
         onCancel={() => setOpen(false)}
       />
+      <MedModal open={addMed} onCancel={() => addMedBtn()} />
+      <EditModal open={editMed} onCancel={() => setEditMed(false)} />
     </main>
   );
 };

@@ -56,3 +56,12 @@
 .ant-form-item-control-input {
   min-height: 0 !important;
 }
+
+.ant-select-selector {
+  height: 24px !important;
+}
+
+.ant-select-single {
+  display: flex;
+  align-items: center;
+}

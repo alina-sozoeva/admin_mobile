@@ -60,7 +60,7 @@ export const PharmaciesPage = () => {
     },
   ];
 
-  const [selectedPharmacy, setSelectedPharmacy] = useState("0"); // по умолчанию первая аптека
+  const [selectedPharmacy, setSelectedPharmacy] = useState("0");
   const [open, setOpen] = useState(false);
 
   const treeData = pharmacies.map((p) => ({ title: p.title, key: p.key }));
@@ -100,8 +100,9 @@ export const PharmaciesPage = () => {
               form={form}
               layout="vertical"
               className={clsx(styles.form, "flex flex-col ")}
+              onFinish={addMedBtn}
             >
-              <Form.Item name="login" label="Наименование">
+              <Form.Item name="nameid" label="Наименование">
                 <Input />
               </Form.Item>
 

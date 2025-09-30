@@ -141,58 +141,63 @@ export const DoctorsPage = () => {
           treeData={treeData}
         />
       </div>
-
-      <table className={clsx(styles.recipeTable)} border={true}>
-        <thead>
-          <tr>
-            <th style={{ width: "3%", textAlign: "center" }}>
-              <Tooltip title={"Добавить"}>
-                <PlusOutlined className={clsx("text-blue text-center")} />
-              </Tooltip>
-            </th>
-            <th style={{ width: "16%" }}>ФИО</th>
-            <th style={{ width: "16%" }}>Телефон</th>
-            <th style={{ width: "16%" }}>Email</th>
-            <th style={{ width: "16%" }}>Логин</th>
-            <th style={{ width: "16%" }}>Пароль</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataSource.map((item) => (
-            <tr key={item.id}>
-              <td>
-                <Flex gap={"small"} wrap="nowrap">
-                  <Tooltip title={"Удалить"}>
-                    <CloseOutlined
-                      className={clsx("text-red")}
-                      onClick={() => setOpen(true)}
-                    />
-                  </Tooltip>
-                  <Tooltip title={"Сохранить"}>
-                    <SaveOutlined className={clsx("text-blue")} />
-                  </Tooltip>
-                </Flex>
-              </td>
-              <td>
-                <Input value={item.name} className={clsx("w-full")} />
-              </td>
-
-              <td>
-                <Input value={item.phone} className={clsx("w-full")} />
-              </td>
-              <td>
-                <Input value={item.email} className={clsx("w-full")} />
-              </td>
-              <td>
-                <Input value={item.login} className={clsx("w-full")} />
-              </td>
-              <td>
-                <Input value={item.password} className={clsx("w-full")} />
-              </td>
+      <Flex vertical className={clsx("w-full")}>
+        <h3 className={clsx("font-bold")}>Врачи</h3>
+        <table className={clsx(styles.recipeTable)} border={true}>
+          <thead>
+            <tr>
+              <th style={{ width: "3%", textAlign: "center" }}>
+                <Tooltip title={"Добавить"}>
+                  <PlusOutlined className={clsx("text-blue text-center")} />
+                </Tooltip>
+              </th>
+              <th style={{ width: "3%" }}>№</th>
+              <th style={{ width: "16%" }}>ФИО</th>
+              <th style={{ width: "16%" }}>Телефон</th>
+              <th style={{ width: "16%" }}>Email</th>
+              <th style={{ width: "16%" }}>Логин</th>
+              <th style={{ width: "16%" }}>Пароль</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {dataSource.map((item, index) => (
+              <tr key={item.id}>
+                <td>
+                  <Flex gap={"small"} wrap="nowrap">
+                    <Tooltip title={"Удалить"}>
+                      <CloseOutlined
+                        className={clsx("text-red")}
+                        onClick={() => setOpen(true)}
+                      />
+                    </Tooltip>
+                    <Tooltip title={"Сохранить"}>
+                      <SaveOutlined className={clsx("text-blue")} />
+                    </Tooltip>
+                  </Flex>
+                </td>
+                <td>{index + 1}</td>
+                <td>
+                  <Input value={item.name} className={clsx("w-full")} />
+                </td>
+
+                <td>
+                  <Input value={item.phone} className={clsx("w-full")} />
+                </td>
+                <td>
+                  <Input value={item.email} className={clsx("w-full")} />
+                </td>
+                <td>
+                  <Input value={item.login} className={clsx("w-full")} />
+                </td>
+                <td>
+                  <Input value={item.password} className={clsx("w-full")} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Flex>
+
       <WarningModal
         title={"врача"}
         open={open}
