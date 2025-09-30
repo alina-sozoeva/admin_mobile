@@ -5,6 +5,10 @@ import { pathName } from "../enums";
 
 export const router = createBrowserRouter([
   {
+    path: "/login",
+    element: <Pages.LoginPage />,
+  },
+  {
     element: <MainLayout />,
     children: [
       { path: "/", element: <Navigate to={pathName.medications} replace /> },

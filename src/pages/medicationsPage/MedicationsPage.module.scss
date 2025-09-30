@@ -1,7 +1,14 @@
+.main {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+}
+
 .recipeTable {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 12px;
+
   th,
   td {
     padding: 2px 4px;
@@ -19,4 +26,13 @@
 
 .search {
   background-color: var(--grey-color);
+}
+
+.arr {
+  border: 1px solid #f3f3f4;
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

@@ -14,14 +14,8 @@
   padding: 0;
   box-sizing: border-box;
   font-size: 16px;
-  font-family: "Manrope", Arial, sans-serif;
+  font-family: "Inter", "Helvetica", sans-serif;
   font-size: 14px;
-}
-
-.container {
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 20px;
 }
 
 .ant-table-wrapper
@@ -35,6 +29,11 @@
   padding: 3px;
 }
 
-.ant-input-affix-wrapper {
-  padding: 2px 11px !important;
+.ant-input-affix-wrapper,
+.ant-input {
+  padding: 1px 11px !important;
+}
+
+.ant-tree-treenode {
+  margin-bottom: 0 !important;
 }

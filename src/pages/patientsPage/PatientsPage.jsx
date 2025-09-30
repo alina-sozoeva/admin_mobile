@@ -26,11 +26,7 @@ export const PatientsPage = () => {
       <table className={clsx(styles.recipeTable)} border={true}>
         <thead>
           <tr>
-            <th style={{ width: "3%", textAlign: "center" }}>
-              <Tooltip title={"Добавить"}>
-                <PlusOutlined className={clsx("text-blue text-center")} />
-              </Tooltip>
-            </th>
+            <th style={{ width: "3%", textAlign: "center" }}>№</th>
             <th style={{ width: "20%" }}>ФИО</th>
             <th style={{ width: "20%" }}>Дата рождения</th>
             <th style={{ width: "20%" }}>Телефон</th>
@@ -39,18 +35,9 @@ export const PatientsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {dataSource.map((item) => (
+          {dataSource.map((item, index) => (
             <tr>
-              <td>
-                <Flex gap={"small"} wrap="nowrap">
-                  <Tooltip title={"Удалить"}>
-                    <CloseOutlined className={clsx("text-red")} />
-                  </Tooltip>
-                  <Tooltip title={"Сохранить"}>
-                    <SaveOutlined className={clsx("text-blue")} />
-                  </Tooltip>
-                </Flex>
-              </td>
+              <td>{index + 1}</td>
               <td>{item.nameid}</td>
               <td>{item.bith}</td>
               <td>{item.phone}</td>

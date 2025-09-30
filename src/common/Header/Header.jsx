@@ -9,9 +9,10 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { pageName, pathName } from "../../enums";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const Header = () => {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const items = [
@@ -29,7 +30,7 @@ export const Header = () => {
     },
     {
       label: (
-        <Space>
+        <Space onClick={() => navigate("/login")}>
           <LogoutOutlined rotate={270} className={clsx("text-red")} /> Выйти
         </Space>
       ),

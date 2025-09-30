@@ -4,13 +4,14 @@ import { UsergroupAddOutlined } from "@ant-design/icons";
 import { useMemo } from "react";
 import { LiaPillsSolid } from "react-icons/lia";
 
-import styles from "./CustomSidebar.module.scss";
-import clsx from "clsx";
 import { pageName, pathName } from "../../enums";
 import { PiUserCirclePlus } from "react-icons/pi";
 import { CiMedicalCross } from "react-icons/ci";
 import { FaRegHospital } from "react-icons/fa";
 import { FaUserDoctor } from "react-icons/fa6";
+
+import styles from "./CustomSidebar.module.scss";
+import clsx from "clsx";
 
 const menuKeys = [
   {
@@ -19,6 +20,26 @@ const menuKeys = [
     path: pathName.medications,
     icon: <LiaPillsSolid />,
   },
+
+  {
+    key: "3",
+    label: pageName.pharmacies,
+    path: pathName.pharmacies,
+    icon: <CiMedicalCross />,
+  },
+  {
+    key: "6",
+    label: pageName.doctors,
+    path: pathName.doctors,
+    icon: <FaUserDoctor />,
+  },
+  // {
+  //   key: "4",
+  //   label: pageName.clinics,
+  //   path: pathName.clinics,
+  //   icon: <FaRegHospital />,
+  // },
+
   {
     key: "2",
     label: pageName.users,
@@ -26,25 +47,7 @@ const menuKeys = [
     icon: <PiUserCirclePlus />,
   },
   {
-    key: "3",
-    label: pageName.doctors,
-    path: pathName.doctors,
-    icon: <FaUserDoctor />,
-  },
-  {
-    key: "4",
-    label: pageName.pharmacies,
-    path: pathName.pharmacies,
-    icon: <CiMedicalCross />,
-  },
-  {
     key: "5",
-    label: pageName.clinics,
-    path: pathName.clinics,
-    icon: <FaRegHospital />,
-  },
-  {
-    key: "6",
     label: pageName.patients,
     path: pathName.patients,
     icon: <UsergroupAddOutlined />,

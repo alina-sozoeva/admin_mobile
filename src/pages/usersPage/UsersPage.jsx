@@ -3,6 +3,8 @@ import { Flex, Input, Select, Tooltip } from "antd";
 
 import styles from "./UsersPage.module.scss";
 import clsx from "clsx";
+import { WarningModal } from "../../common";
+import { useState } from "react";
 
 export const UsersPage = () => {
   const dataSource = [
@@ -15,6 +17,8 @@ export const UsersPage = () => {
       email: "test2@gmail.com",
     },
   ];
+  const [open, setOpen] = useState(false);
+
   return (
     <main>
       <table className={clsx(styles.recipeTable)} border={true}>
@@ -36,7 +40,10 @@ export const UsersPage = () => {
               <td>
                 <Flex gap={"small"} wrap="nowrap">
                   <Tooltip title={"Удалить"}>
-                    <CloseOutlined className={clsx("text-red")} />
+                    <CloseOutlined
+                      className={clsx("text-red")}
+                      onClick={() => setOpen(true)}
+                    />
                   </Tooltip>
                   <Tooltip title={"Сохранить"}>
                     <SaveOutlined className={clsx("text-blue")} />
@@ -63,6 +70,11 @@ export const UsersPage = () => {
           ))}
         </tbody>
       </table>
+      <WarningModal
+        title={"пользователя"}
+        open={open}
+        onCancel={() => setOpen(false)}
+      />
     </main>
   );
 };
