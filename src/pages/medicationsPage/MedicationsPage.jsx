@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Flex, Input, Select, Tooltip, Tree } from "antd";
+import { Flex, Form, Input, Select, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
@@ -7,11 +7,15 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 
+import { WarningModal } from "../../common";
+import { useForm } from "antd/es/form/Form";
+
 import styles from "./MedicationsPage.module.scss";
 import clsx from "clsx";
-import { WarningModal } from "../../common";
 
 export const MedicationsPage = () => {
+  const [form] = useForm();
+
   const groups = [
     { key: "0", title: "Анальгетики" },
     { key: "1", title: "Антибиотики" },
@@ -39,6 +43,13 @@ export const MedicationsPage = () => {
 
   const dataSource = allMedications.filter((m) => m.groupKey === selectedGroup);
 
+  const [addMed, setAddMed] = useState(false);
+
+  const addMedBtn = () => {
+    setAddMed(false);
+    form.resetFields();
+  };
+
   return (
     <main className={styles.main}>
       <div className={styles.arr}>
@@ -46,9 +57,46 @@ export const MedicationsPage = () => {
           <h3 className={clsx("font-bold")}>Группа медикаментов</h3>
 
           <Tooltip title={"Добавить группу"}>
-            <PlusOutlined className={clsx("text-blue text-center")} />
+            <PlusOutlined
+              className={clsx("text-blue text-center")}
+              onClick={() => setAddMed(true)}
+            />
           </Tooltip>
         </Flex>
+        {addMed && (
+          <Flex className={clsx("px-2")}>
+            <Form
+              form={form}
+              layout="vertical"
+              className={clsx(styles.form, "flex flex-col ")}
+            >
+              <Form.Item name="login" label="Наименование">
+                <Input />
+              </Form.Item>
+              <Flex className={clsx("pt-2 gap-[3px]")}>
+                <button
+                  className={clsx(
+                    "rounded-lg bg-green text-white p-[2px] flex items-center gap-[2px]"
+                  )}
+                  onClick={() => addMedBtn()}
+                >
+                  <PlusOutlined />
+                  Добавить
+                </button>
+                <button
+                  className={clsx(
+                    "rounded-lg bg-red text-white p-[2px] flex items-center gap-[2px]"
+                  )}
+                  onClick={() => addMedBtn()}
+                >
+                  <CloseOutlined />
+                  Закрыть
+                </button>
+              </Flex>
+            </Form>
+          </Flex>
+        )}
+
         <Tree
           showLine
           switcherIcon={<DownOutlined />}
@@ -64,7 +112,7 @@ export const MedicationsPage = () => {
           <thead>
             <tr>
               <th style={{ width: "3%", textAlign: "center" }}>
-                <Tooltip title={"Добавить"}>
+                <Tooltip title={"Добавить медикамент"}>
                   <PlusOutlined className={clsx("text-blue text-center")} />
                 </Tooltip>
               </th>

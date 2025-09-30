@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Flex, Input, Tooltip, Tree } from "antd";
+import { Flex, Form, Input, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
@@ -10,8 +10,11 @@ import {
 import styles from "./PharmaciesPage.module.scss";
 import clsx from "clsx";
 import { WarningModal } from "../../common";
+import { useForm } from "antd/es/form/Form";
 
 export const PharmaciesPage = () => {
+  const [form] = useForm();
+
   const pharmacies = [
     { key: "0", title: "Аптека 1" },
     { key: "1", title: "Аптека 2" },
@@ -72,15 +75,66 @@ export const PharmaciesPage = () => {
     (p) => p.pharmacyKey === selectedPharmacy
   );
 
+  const [addPhar, setAddPhar] = useState(false);
+
+  const addMedBtn = () => {
+    setAddPhar(false);
+    form.resetFields();
+  };
+
   return (
     <main className={styles.main}>
       <div className={styles.arr}>
         <Flex gap={"small"} align="center">
           <h3 className={clsx("font-bold")}>Аптеки</h3>
           <Tooltip title={"Добавить аптеку"}>
-            <PlusOutlined className={clsx("text-blue text-center")} />
+            <PlusOutlined
+              className={clsx("text-blue text-center")}
+              onClick={() => setAddPhar(true)}
+            />
           </Tooltip>
         </Flex>
+        {addPhar && (
+          <Flex className={clsx("px-2")}>
+            <Form
+              form={form}
+              layout="vertical"
+              className={clsx(styles.form, "flex flex-col ")}
+            >
+              <Form.Item name="login" label="Наименование">
+                <Input />
+              </Form.Item>
+
+              <Form.Item name="adress" label="Адрес">
+                <Input />
+              </Form.Item>
+
+              <Form.Item name="phone" label="Номер телефона">
+                <Input />
+              </Form.Item>
+              <Flex className={clsx("pt-2 gap-[3px]")}>
+                <button
+                  className={clsx(
+                    "rounded-lg bg-green text-white p-[2px] flex items-center gap-[2px]"
+                  )}
+                  onClick={() => addMedBtn()}
+                >
+                  <PlusOutlined />
+                  Добавить
+                </button>
+                <button
+                  className={clsx(
+                    "rounded-lg bg-red text-white p-[2px] flex items-center gap-[2px]"
+                  )}
+                  onClick={() => addMedBtn()}
+                >
+                  <CloseOutlined />
+                  Закрыть
+                </button>
+              </Flex>
+            </Form>
+          </Flex>
+        )}
         <Tree
           showLine
           switcherIcon={<DownOutlined />}
@@ -96,7 +150,7 @@ export const PharmaciesPage = () => {
           <thead>
             <tr>
               <th style={{ width: "3%", textAlign: "center" }}>
-                <Tooltip title={"Добавить"}>
+                <Tooltip title={"Добавить фармацевты"}>
                   <PlusOutlined className={clsx("text-blue text-center")} />
                 </Tooltip>
               </th>

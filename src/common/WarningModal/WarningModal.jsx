@@ -22,7 +22,7 @@ export const WarningModal = ({ title, open, onCancel, onConfirm }) => {
         </span>
       </Flex>
 
-      <Flex vertical>
+      <Flex vertical align="center">
         <button
           type="submit"
           className={clsx(styles.confirm)}

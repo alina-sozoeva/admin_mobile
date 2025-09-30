@@ -2,17 +2,12 @@ import { useForm } from "antd/es/form/Form";
 import { Flex, Form, Input, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 
-import { toast } from "react-toastify";
-
 import styles from "./LoginPage.module.scss";
 import clsx from "clsx";
-import { useTranslation } from "react-i18next";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [form] = useForm();
-
-  const { t } = useTranslation();
 
   const onFinish = async (values) => {
     navigate("/");

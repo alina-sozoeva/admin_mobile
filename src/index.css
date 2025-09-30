@@ -7,6 +7,7 @@
   --blue-color: #0d6efd;
   --white-color: #ffffff;
   --grey-color: #fcfcfc;
+  --success-color: #50cd89;
 }
 
 * {
@@ -15,7 +16,7 @@
   box-sizing: border-box;
   font-size: 16px;
   font-family: "Inter", "Helvetica", sans-serif;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .ant-table-wrapper
@@ -36,4 +37,22 @@
 
 .ant-tree-treenode {
   margin-bottom: 0 !important;
+}
+
+.ant-form-item {
+  margin-bottom: 0 !important;
+}
+
+.ant-form-item-label {
+  padding: 0 !important;
+}
+
+.ant-input,
+.ant-form-item,
+.ant-form-item-label > label {
+  font-size: 13px !important;
+}
+
+.ant-form-item-control-input {
+  min-height: 0 !important;
 }
