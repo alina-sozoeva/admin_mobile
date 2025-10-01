@@ -1,24 +1,24 @@
 import { useState } from "react";
-import { Flex, Form, Input, Tooltip, Tree } from "antd";
+import { Flex, Input, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
+  EditOutlined,
   PlusOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
 
+import { WarningModal } from "../../common";
+import { AddPharModal, EditPharModal } from "../../components";
+
 import styles from "./PharmaciesPage.module.scss";
 import clsx from "clsx";
-import { WarningModal } from "../../common";
-import { useForm } from "antd/es/form/Form";
 
 export const PharmaciesPage = () => {
-  const [form] = useForm();
-
   const pharmacies = [
-    { key: "0", title: "Аптека 1" },
-    { key: "1", title: "Аптека 2" },
-    { key: "2", title: "Аптека 3" },
+    { key: "0", nameid: "Аптека 1", adress: "Аптека 1 test", phone: "000" },
+    { key: "1", nameid: "Аптека 2", adress: "Аптека 2 test", phone: "000" },
+    { key: "2", nameid: "Аптека 3", adress: "Аптека 3 test", phone: "000" },
   ];
 
   const allPharmacists = [
@@ -60,10 +60,31 @@ export const PharmaciesPage = () => {
     },
   ];
 
-  const [selectedPharmacy, setSelectedPharmacy] = useState("0");
-  const [open, setOpen] = useState(false);
+  console.log(pharmacies, "pharmacies");
 
-  const treeData = pharmacies.map((p) => ({ title: p.title, key: p.key }));
+  const [selectedPharmacy, setSelectedPharmacy] = useState("0");
+  const [openWar, setOpenWar] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [item, setItem] = useState();
+
+  const onItem = (item) => {
+    setItem(item);
+    setOpenEdit(true);
+  };
+
+  const treeData = pharmacies.map((p) => ({
+    title: (
+      <Flex className={clsx("gap-[5px]")}>
+        {p.nameid}{" "}
+        <EditOutlined
+          className={clsx("text-blue ")}
+          onClick={() => onItem(p)}
+        />
+      </Flex>
+    ),
+    key: p.key,
+  }));
 
   const onSelect = (selectedKeys) => {
     if (selectedKeys.length > 0) {
@@ -75,13 +96,6 @@ export const PharmaciesPage = () => {
     (p) => p.pharmacyKey === selectedPharmacy
   );
 
-  const [addPhar, setAddPhar] = useState(false);
-
-  const addMedBtn = () => {
-    setAddPhar(false);
-    form.resetFields();
-  };
-
   return (
     <main className={styles.main}>
       <div className={styles.arr}>
@@ -90,11 +104,11 @@ export const PharmaciesPage = () => {
           <Tooltip title={"Добавить аптеку"}>
             <PlusOutlined
               className={clsx("text-blue text-center")}
-              onClick={() => setAddPhar(true)}
+              onClick={() => setOpenAdd(true)}
             />
           </Tooltip>
         </Flex>
-        {addPhar && (
+        {/* {addPhar && (
           <Flex className={clsx("px-2")}>
             <Form
               form={form}
@@ -135,7 +149,7 @@ export const PharmaciesPage = () => {
               </Flex>
             </Form>
           </Flex>
-        )}
+        )} */}
         <Tree
           showLine
           switcherIcon={<DownOutlined />}
@@ -152,7 +166,10 @@ export const PharmaciesPage = () => {
             <tr>
               <th style={{ width: "3%", textAlign: "center" }}>
                 <Tooltip title={"Добавить фармацевты"}>
-                  <PlusOutlined className={clsx("text-blue text-center")} />
+                  <PlusOutlined
+                    className={clsx("text-blue text-center")}
+                    onClick={() => setOpenWar(true)}
+                  />
                 </Tooltip>
               </th>
               <th style={{ width: "16%" }}>ФИО</th>
@@ -170,7 +187,7 @@ export const PharmaciesPage = () => {
                     <Tooltip title={"Удалить"}>
                       <CloseOutlined
                         className={clsx("text-red")}
-                        onClick={() => setOpen(true)}
+                        onClick={() => setOpenWar(true)}
                       />
                     </Tooltip>
                     <Tooltip title={"Сохранить"}>
@@ -200,8 +217,14 @@ export const PharmaciesPage = () => {
       </Flex>
       <WarningModal
         title={"фармацевта"}
-        open={open}
-        onCancel={() => setOpen(false)}
+        open={openWar}
+        onCancel={() => setOpenWar(false)}
+      />
+      <AddPharModal open={openAdd} onCancel={() => setOpenAdd(false)} />
+      <EditPharModal
+        open={openEdit}
+        onCancel={() => setOpenEdit(false)}
+        item={item}
       />
     </main>
   );

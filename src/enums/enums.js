@@ -4,7 +4,7 @@ export const pageName = {
   users: "Пользователи",
   pharmacies: "Аптеки",
   clinics: "Клиники",
-  patients: "Пациент",
+  patients: "Пациенты",
   doctors: "Врачи",
 };
 

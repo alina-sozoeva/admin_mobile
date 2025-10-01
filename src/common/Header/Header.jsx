@@ -59,7 +59,7 @@ export const Header = () => {
 
   return (
     <header className={clsx(styles.header, "antd-d")}>
-      <Flex vertical gap={"small"}>
+      <Flex vertical className={clsx("gap-[5px]")}>
         <h2 className={clsx("font-bold")}>{title}</h2>
         <Input placeholder="Поиск" prefix={<SearchOutlined />} />
       </Flex>

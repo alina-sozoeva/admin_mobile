@@ -65,3 +65,7 @@
   display: flex;
   align-items: center;
 }
+
+.ant-menu-item {
+  height: 35px !important;
+}

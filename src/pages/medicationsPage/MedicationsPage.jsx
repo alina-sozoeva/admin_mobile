@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Flex, Form, Input, Select, Tooltip, Tree } from "antd";
+import { Flex, Input, Select, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
@@ -19,9 +19,9 @@ export const MedicationsPage = () => {
   const [form] = useForm();
 
   const groups = [
-    { key: "0", title: "Анальгетики" },
-    { key: "1", title: "Антибиотики" },
-    { key: "2", title: "Противовирусные" },
+    { key: "0", nameid: "Анальгетики" },
+    { key: "1", nameid: "Антибиотики" },
+    { key: "2", nameid: "Противовирусные" },
   ];
 
   const allMedications = [
@@ -37,6 +37,18 @@ export const MedicationsPage = () => {
 
   const [addMed, setAddMed] = useState(false);
   const [editMed, setEditMed] = useState(false);
+  const [item, setItem] = useState();
+
+  console.log(item, "item");
+
+  console.log(editMed, "editMed");
+
+  console.log(groups, "groups");
+
+  const onItem = (item) => {
+    setItem(item);
+    setEditMed(true);
+  };
 
   const addMedBtn = () => {
     setAddMed(false);
@@ -46,10 +58,10 @@ export const MedicationsPage = () => {
   const treeData = groups.map((g) => ({
     title: (
       <Flex className={clsx("gap-[5px]")}>
-        {g.title}{" "}
+        {g.nameid}{" "}
         <EditOutlined
           className={clsx("text-blue ")}
-          onClick={() => setEditMed(true)}
+          onClick={() => onItem(g)}
         />
       </Flex>
     ),
@@ -176,7 +188,11 @@ export const MedicationsPage = () => {
         onCancel={() => setOpen(false)}
       />
       <MedModal open={addMed} onCancel={() => addMedBtn()} />
-      <EditModal open={editMed} onCancel={() => setEditMed(false)} />
+      <EditModal
+        open={editMed}
+        onCancel={() => setEditMed(false)}
+        item={item}
+      />
     </main>
   );
 };

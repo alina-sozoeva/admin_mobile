@@ -3,13 +3,24 @@ import { useForm } from "antd/es/form/Form";
 
 import styles from "./EditModal.module.scss";
 import clsx from "clsx";
+import { useEffect } from "react";
 
-export const EditModal = ({ open, onCancel }) => {
+export const EditModal = ({ open, onCancel, item }) => {
   const [form] = useForm();
+
+  console.log(item, "item");
 
   const onFinish = () => {
     onCancel();
   };
+
+  useEffect(() => {
+    if (item) {
+      form.setFieldsValue({
+        nameid: item?.nameid,
+      });
+    }
+  }, [form, open, item]);
 
   return (
     <Modal open={open} onCancel={onCancel} centered width={300} footer={false}>

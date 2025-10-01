@@ -2,13 +2,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, Space } from "antd";
 import { UsergroupAddOutlined } from "@ant-design/icons";
 import { useMemo } from "react";
-import { LiaPillsSolid } from "react-icons/lia";
 
 import { pageName, pathName } from "../../enums";
-import { PiUserCirclePlus } from "react-icons/pi";
+import { PiPillThin, PiUserCirclePlusThin, PiUsersThin } from "react-icons/pi";
 import { CiMedicalCross } from "react-icons/ci";
-import { FaRegHospital } from "react-icons/fa";
-import { FaUserDoctor } from "react-icons/fa6";
+import { GiStethoscope } from "react-icons/gi";
 
 import styles from "./CustomSidebar.module.scss";
 import clsx from "clsx";
@@ -18,7 +16,7 @@ const menuKeys = [
     key: "1",
     label: pageName.medications,
     path: pathName.medications,
-    icon: <LiaPillsSolid />,
+    icon: <PiPillThin />,
   },
 
   {
@@ -31,7 +29,7 @@ const menuKeys = [
     key: "6",
     label: pageName.doctors,
     path: pathName.doctors,
-    icon: <FaUserDoctor />,
+    icon: <GiStethoscope />,
   },
   // {
   //   key: "4",
@@ -44,13 +42,13 @@ const menuKeys = [
     key: "2",
     label: pageName.users,
     path: pathName.users,
-    icon: <PiUserCirclePlus />,
+    icon: <PiUserCirclePlusThin />,
   },
   {
     key: "5",
     label: pageName.patients,
     path: pathName.patients,
-    icon: <UsergroupAddOutlined />,
+    icon: <PiUsersThin />,
   },
 ];
 

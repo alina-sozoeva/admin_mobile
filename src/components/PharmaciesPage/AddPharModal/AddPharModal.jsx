@@ -1,18 +1,24 @@
 import { Flex, Form, Input, Modal } from "antd";
 import { useForm } from "antd/es/form/Form";
 
-import styles from "./MedModal.module.scss";
+import styles from "./AddPharModal.module.scss";
 import clsx from "clsx";
+import { PlusOutlined } from "@ant-design/icons";
 
-export const MedModal = ({ open, onCancel }) => {
+export const AddPharModal = ({ open, onCancel }) => {
   const [form] = useForm();
 
-  const onFinish = () => {
+  const onReset = () => {
     onCancel();
+    form.resetFields();
+  };
+
+  const onFinish = () => {
+    onReset();
   };
 
   return (
-    <Modal open={open} onCancel={onCancel} centered width={300} footer={false}>
+    <Modal open={open} onCancel={onReset} centered width={300} footer={false}>
       <h2 className={clsx("font-bold")}>Добавить</h2>
       <Form
         form={form}
@@ -20,7 +26,15 @@ export const MedModal = ({ open, onCancel }) => {
         className={clsx(styles.form, "flex flex-col ")}
         onFinish={onFinish}
       >
-        <Form.Item name="login" label="Наименование">
+        <Form.Item name="nameid" label="Наименование">
+          <Input />
+        </Form.Item>
+
+        <Form.Item name="adress" label="Адрес">
+          <Input />
+        </Form.Item>
+
+        <Form.Item name="phone" label="Номер телефона">
           <Input />
         </Form.Item>
         <Flex className={clsx("pt-2 gap-[3px] items-center justify-center")}>
@@ -30,17 +44,9 @@ export const MedModal = ({ open, onCancel }) => {
             )}
             type="submit"
           >
+            <PlusOutlined />
             Добавить
           </button>
-          {/* <button
-            className={clsx(
-              "rounded-lg bg-red text-white p-[2px] flex items-center gap-[2px]"
-            )}
-            onClick={() => onCancel()}
-          >
-            <CloseOutlined />
-            Закрыть
-          </button> */}
         </Flex>
       </Form>
     </Modal>
