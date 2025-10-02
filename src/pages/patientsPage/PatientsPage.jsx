@@ -1,52 +1,45 @@
-import { Flex, Input, Select, Tooltip } from "antd";
-import { CloseOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons";
+import { useGetPatientsQuery } from "../../store";
+import { gender } from "../../enums";
 
 import styles from "./PatientsPage.module.scss";
 import clsx from "clsx";
+import dayjs from "dayjs";
 
 export const PatientsPage = () => {
-  const dataSource = [
-    {
-      nameid: "test1",
-      phone: "(996) 555 55 55 55",
-      email: "test2@gmail.com",
-      gender: "жен",
-      bith: "09.09.2000",
-    },
-    {
-      nameid: "test2",
-      phone: "(996) 555 00 00 00",
-      email: "test2@gmail.com",
-      gender: "жен",
-      bith: "09.09.2000",
-    },
-  ];
+  const { data: patients } = useGetPatientsQuery();
+
   return (
-    <main>
-      <table className={clsx(styles.recipeTable)} border={true}>
-        <thead>
-          <tr>
-            <th style={{ width: "3%", textAlign: "center" }}>№</th>
-            <th style={{ width: "20%" }}>ФИО</th>
-            <th style={{ width: "20%" }}>Дата рождения</th>
-            <th style={{ width: "20%" }}>Телефон</th>
-            <th style={{ width: "20%" }}>Email</th>
-            <th style={{ width: "20%" }}>Пол</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataSource.map((item, index) => (
+    <main className={styles.container}>
+      <div className={styles.tableWrapper}>
+        <table className={clsx(styles.recipeTable)}>
+          <thead>
             <tr>
-              <td>{index + 1}</td>
-              <td>{item.nameid}</td>
-              <td>{item.bith}</td>
-              <td>{item.phone}</td>
-              <td>{item.email}</td>
-              <td>{item.gender}</td>
+              <th style={{ width: "2%", textAlign: "center" }}>№</th>
+              <th style={{ width: "20%" }}>ФИО</th>
+              <th style={{ width: "15%" }}>Дата рождения</th>
+              <th style={{ width: "20%" }}>Телефон</th>
+              <th style={{ width: "20%" }}>Email</th>
+              <th style={{ width: "10%" }}>Пол</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {patients?.map((item, index) => (
+              <tr key={item.codeid || index}>
+                <td>{index + 1}</td>
+                <td>{item.fio}</td>
+                <td>
+                  {item?.birth_date
+                    ? dayjs(item.birth_date).format("DD.MM.YYYY")
+                    : "-"}
+                </td>
+                <td>{item.phone}</td>
+                <td>{item.email}</td>
+                <td>{gender[item.gender]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 };

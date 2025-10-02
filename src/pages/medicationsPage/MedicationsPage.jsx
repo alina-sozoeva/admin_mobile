@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Flex, Input, Select, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
@@ -15,6 +15,8 @@ import styles from "./MedicationsPage.module.scss";
 import clsx from "clsx";
 import { EditModal, MedModal } from "../../components";
 
+import { useGetDrugFormQuery, useGetDrugQuery } from "../../store";
+
 export const MedicationsPage = () => {
   const [form] = useForm();
 
@@ -24,26 +26,14 @@ export const MedicationsPage = () => {
     { key: "2", nameid: "Противовирусные" },
   ];
 
-  const allMedications = [
-    { id: 1, name: "Парацетамол", groupKey: "0" },
-    { id: 2, name: "Ибупрофен", groupKey: "0" },
-    { id: 3, name: "Амоксициллин", groupKey: "1" },
-    { id: 4, name: "Цефтриаксон", groupKey: "1" },
-    { id: 5, name: "Ацикловир", groupKey: "2" },
-  ];
-
   const [selectedGroup, setSelectedGroup] = useState("0");
   const [open, setOpen] = useState(false);
-
   const [addMed, setAddMed] = useState(false);
   const [editMed, setEditMed] = useState(false);
   const [item, setItem] = useState();
 
-  console.log(item, "item");
-
-  console.log(editMed, "editMed");
-
-  console.log(groups, "groups");
+  const { data: drugs } = useGetDrugQuery({});
+  const { data: drugForm } = useGetDrugFormQuery();
 
   const onItem = (item) => {
     setItem(item);
@@ -54,6 +44,13 @@ export const MedicationsPage = () => {
     setAddMed(false);
     form.resetFields();
   };
+
+  const mappedDrugForm = useMemo(() => {
+    return drugForm?.map((item) => ({
+      value: item.codeid,
+      label: item.nameid,
+    }));
+  }, [drugForm]);
 
   const treeData = groups.map((g) => ({
     title: (
@@ -74,7 +71,7 @@ export const MedicationsPage = () => {
     }
   };
 
-  const dataSource = allMedications.filter((m) => m.groupKey === selectedGroup);
+  const dataSource = drugs?.filter((m) => m.groupKey === selectedGroup);
 
   return (
     <main className={styles.main}>
@@ -147,8 +144,8 @@ export const MedicationsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {dataSource.map((item) => (
-              <tr key={item.id}>
+            {drugs?.map((item) => (
+              <tr key={item.codeid}>
                 <td>
                   <Flex gap={"small"} wrap="nowrap">
                     <Tooltip title={"Удалить"}>
@@ -163,18 +160,13 @@ export const MedicationsPage = () => {
                   </Flex>
                 </td>
                 <td>
-                  <Input value={item.name} className={clsx("w-full")} />
+                  <Input value={item.nameid} className={clsx("w-full")} />
                 </td>
                 <td>
                   <Select
-                    defaultValue="test1"
                     className={clsx("w-full")}
-                    options={[
-                      { value: "test1", label: "test1" },
-                      { value: "test2", label: "test2" },
-                      { value: "test3", label: "test3" },
-                      { value: "test4", label: "test4" },
-                    ]}
+                    options={mappedDrugForm}
+                    value={item.drug_form_codeid}
                   />
                 </td>
               </tr>

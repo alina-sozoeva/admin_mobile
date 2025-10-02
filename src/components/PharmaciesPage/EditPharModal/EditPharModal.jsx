@@ -23,7 +23,7 @@ export const EditPharModal = ({ open, onCancel, item }) => {
     if (item) {
       form.setFieldsValue({
         nameid: item?.nameid,
-        adress: item?.adress,
+        address: item?.address,
         phone: item?.phone,
       });
     }
@@ -42,7 +42,7 @@ export const EditPharModal = ({ open, onCancel, item }) => {
           <Input />
         </Form.Item>
 
-        <Form.Item name="adress" label="Адрес">
+        <Form.Item name="address" label="Адрес">
           <Input />
         </Form.Item>
 

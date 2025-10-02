@@ -17,3 +17,8 @@ export const pathName = {
   patients: "/patients",
   doctors: "/doctors",
 };
+
+export const gender = {
+  1: "муж.",
+  0: "жен.",
+};

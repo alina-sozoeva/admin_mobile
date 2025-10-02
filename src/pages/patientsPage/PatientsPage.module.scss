@@ -1,22 +1,37 @@
+.container {
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.tableWrapper {
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
 .recipeTable {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 12px;
+
+  thead {
+    position: sticky;
+    top: 0;
+    background: #f0f0f0;
+    z-index: 1;
+  }
+
   th,
   td {
     padding: 0 4px;
-    border: 1px solid #eee;
+    border: 1px solid #d9d9d9;
     text-align: left;
   }
+
   th {
-    background: #f9f9f9;
+    font-weight: bold;
   }
 
-  svg {
-    font-size: 16px;
+  tbody tr:hover {
+    background-color: #fafafa;
   }
-}
-
-.search {
-  background-color: var(--grey-color);
 }

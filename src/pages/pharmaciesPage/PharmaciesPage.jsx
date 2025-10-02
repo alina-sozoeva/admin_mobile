@@ -13,14 +13,9 @@ import { AddPharModal, EditPharModal } from "../../components";
 
 import styles from "./PharmaciesPage.module.scss";
 import clsx from "clsx";
+import { useGetPharmacistsQuery, useGetPharmacyQuery } from "../../store";
 
 export const PharmaciesPage = () => {
-  const pharmacies = [
-    { key: "0", nameid: "Аптека 1", adress: "Аптека 1 test", phone: "000" },
-    { key: "1", nameid: "Аптека 2", adress: "Аптека 2 test", phone: "000" },
-    { key: "2", nameid: "Аптека 3", adress: "Аптека 3 test", phone: "000" },
-  ];
-
   const allPharmacists = [
     {
       id: 1,
@@ -60,30 +55,31 @@ export const PharmaciesPage = () => {
     },
   ];
 
-  console.log(pharmacies, "pharmacies");
-
   const [selectedPharmacy, setSelectedPharmacy] = useState("0");
   const [openWar, setOpenWar] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [item, setItem] = useState();
 
+  const { data: pharmacies } = useGetPharmacyQuery();
+  const { data: pharmacists } = useGetPharmacistsQuery();
+
   const onItem = (item) => {
     setItem(item);
     setOpenEdit(true);
   };
 
-  const treeData = pharmacies.map((p) => ({
+  const treeData = pharmacies?.map((p) => ({
     title: (
       <Flex className={clsx("gap-[5px]")}>
-        {p.nameid}{" "}
+        {p?.nameid}{" "}
         <EditOutlined
           className={clsx("text-blue ")}
           onClick={() => onItem(p)}
         />
       </Flex>
     ),
-    key: p.key,
+    key: p?.codeid,
   }));
 
   const onSelect = (selectedKeys) => {
@@ -174,14 +170,13 @@ export const PharmaciesPage = () => {
               </th>
               <th style={{ width: "16%" }}>ФИО</th>
               <th style={{ width: "16%" }}>Телефон</th>
-              <th style={{ width: "16%" }}>Email</th>
               <th style={{ width: "16%" }}>Логин</th>
               <th style={{ width: "16%" }}>Пароль</th>
             </tr>
           </thead>
           <tbody>
-            {dataSource.map((item) => (
-              <tr key={item.id}>
+            {pharmacists?.map((item) => (
+              <tr key={item.codeid}>
                 <td>
                   <Flex gap={"small"} wrap="nowrap">
                     <Tooltip title={"Удалить"}>
@@ -196,13 +191,10 @@ export const PharmaciesPage = () => {
                   </Flex>
                 </td>
                 <td>
-                  <Input value={item.name} className={clsx("w-full")} />
+                  <Input value={item.nameid} className={clsx("w-full")} />
                 </td>
                 <td>
                   <Input value={item.phone} className={clsx("w-full")} />
-                </td>
-                <td>
-                  <Input value={item.email} className={clsx("w-full")} />
                 </td>
                 <td>
                   <Input value={item.login} className={clsx("w-full")} />

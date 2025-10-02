@@ -12,15 +12,16 @@ import clsx from "clsx";
 import { WarningModal } from "../../common";
 import { useForm } from "antd/es/form/Form";
 import { AddDocModal, EditDocModal } from "../../components";
+import { useGetClinicsQuery, useGetDoctorsQuery } from "../../store";
 
 export const DoctorsPage = () => {
   const [form] = useForm();
 
-  const clinics = [
-    { key: "0", nameid: "Клиника 1", adress: "Клиника 1 test", phone: "000" },
-    { key: "1", nameid: "Клиника 2", adress: "Клиника 2 test", phone: "000" },
-    { key: "2", nameid: "Клиника 3", adress: "Клиника 3 test", phone: "000" },
-  ];
+  // const clinics = [
+  //   { key: "0", nameid: "Клиника 1", adress: "Клиника 1 test", phone: "000" },
+  //   { key: "1", nameid: "Клиника 2", adress: "Клиника 2 test", phone: "000" },
+  //   { key: "2", nameid: "Клиника 3", adress: "Клиника 3 test", phone: "000" },
+  // ];
 
   const allDoctors = [
     {
@@ -67,12 +68,17 @@ export const DoctorsPage = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [item, setItem] = useState();
 
+  const { data: clinics } = useGetClinicsQuery({});
+  const { data: doctors } = useGetDoctorsQuery();
+
+  console.log(clinics, "clinics");
+
   const onItem = (item) => {
     setItem(item);
     setOpenEdit(true);
   };
 
-  const treeData = clinics.map((c) => ({
+  const treeData = clinics?.map((c) => ({
     title: (
       <Flex className={clsx("gap-[5px]")}>
         {c.nameid}{" "}
@@ -91,7 +97,7 @@ export const DoctorsPage = () => {
     }
   };
 
-  const dataSource = allDoctors.filter((d) => d.clinicKey === selectedClinic);
+  const dataSource = doctors?.filter((d) => d.clinicKey === selectedClinic);
 
   const [addClinic, setAddClinic] = useState(false);
 
@@ -175,13 +181,12 @@ export const DoctorsPage = () => {
               <th style={{ width: "3%" }}>№</th>
               <th style={{ width: "16%" }}>ФИО</th>
               <th style={{ width: "16%" }}>Телефон</th>
-              <th style={{ width: "16%" }}>Email</th>
               <th style={{ width: "16%" }}>Логин</th>
               <th style={{ width: "16%" }}>Пароль</th>
             </tr>
           </thead>
           <tbody>
-            {dataSource.map((item, index) => (
+            {doctors?.map((item, index) => (
               <tr key={item.id}>
                 <td>
                   <Flex gap={"small"} wrap="nowrap">
@@ -198,15 +203,13 @@ export const DoctorsPage = () => {
                 </td>
                 <td>{index + 1}</td>
                 <td>
-                  <Input value={item.name} className={clsx("w-full")} />
+                  <Input value={item.nameid} className={clsx("w-full")} />
                 </td>
 
                 <td>
                   <Input value={item.phone} className={clsx("w-full")} />
                 </td>
-                <td>
-                  <Input value={item.email} className={clsx("w-full")} />
-                </td>
+
                 <td>
                   <Input value={item.login} className={clsx("w-full")} />
                 </td>
