@@ -69,3 +69,7 @@
 .ant-menu-item {
   height: 35px !important;
 }
+
+.ant-empty-normal {
+  margin-block: 5px;
+}

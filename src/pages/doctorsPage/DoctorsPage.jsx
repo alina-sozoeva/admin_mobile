@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Flex, Input, Spin, Tooltip, Tree } from "antd";
+import { Empty, Flex, Input, Spin, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
@@ -13,13 +13,16 @@ import { WarningModal } from "../../common";
 import { AddDocModal, EditDocModal } from "../../components";
 import {
   useAddDoctorMutation,
+  useDeleteDoctorMutation,
   useGetClinicsQuery,
   useGetDoctorsQuery,
 } from "../../store";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { MdOutlineEdit } from "react-icons/md";
 
 export const DoctorsPage = () => {
   const [editableDoc, setEditableDoc] = useState([]);
-  const [selectedClinic, setSelectedClinic] = useState("0");
+  const [selectedClinic, setSelectedClinic] = useState();
   const [openWar, setOpenWar] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -34,9 +37,12 @@ export const DoctorsPage = () => {
     data: doctors,
     isLoading: isLoadingDoctors,
     isFetching: isFetchingDoctors,
-  } = useGetDoctorsQuery();
+  } = useGetDoctorsQuery(
+    selectedClinic ? { clinic_codeid: selectedClinic } : skipToken
+  );
 
   const [add] = useAddDoctorMutation();
+  const [deleteDoc] = useDeleteDoctorMutation();
 
   const onItem = (item) => {
     setItem(item);
@@ -44,22 +50,23 @@ export const DoctorsPage = () => {
   };
 
   useEffect(() => {
-    if (doctors?.length > 0 && editableDoc?.length === 0) {
-      setEditableDoc(doctors.map((d) => ({ ...d, isNew: false })));
-    }
-  }, [doctors, editableDoc?.length]);
+    setEditableDoc(doctors?.map((d) => ({ ...d, isNew: false })) || []);
+  }, [doctors]);
 
   const treeData = clinics?.map((c) => ({
     title: (
-      <Flex className={clsx("gap-[5px]")}>
-        {c.nameid}{" "}
-        <EditOutlined
+      <Flex align="center" className={clsx("gap-[5px]")}>
+        {c.nameid}
+        <MdOutlineEdit
           className={clsx("text-blue ")}
-          onClick={() => onItem(c)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onItem(c);
+          }}
         />
       </Flex>
     ),
-    key: c.key,
+    key: c?.codeid,
   }));
 
   const loading =
@@ -95,6 +102,7 @@ export const DoctorsPage = () => {
       phone: item.phone,
       login: item.login,
       password: item.password,
+      clinic_codeid: selectedClinic,
     });
   };
 
@@ -102,11 +110,14 @@ export const DoctorsPage = () => {
     if (item.isNew) {
       setEditableDoc((prev) => prev.filter((m) => m.codeid !== item.codeid));
     } else {
+      setItem(item);
       setOpenWar(true);
     }
   };
 
-  const dataSource = doctors?.filter((d) => d.clinicKey === selectedClinic);
+  const onDeleteDoc = () => {
+    deleteDoc({ codeid: item.codeid });
+  };
 
   return (
     <Spin spinning={loading}>
@@ -126,11 +137,11 @@ export const DoctorsPage = () => {
           <Tree
             showLine
             switcherIcon={<DownOutlined />}
-            defaultExpandedKeys={["0"]}
             onSelect={onSelect}
             treeData={treeData}
           />
         </div>
+
         <Flex vertical className={clsx("w-full")}>
           <h3 className={clsx("font-bold")}>Врачи</h3>
           <table className={clsx(styles.recipeTable)} border={true}>
@@ -152,93 +163,115 @@ export const DoctorsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {editableDoc?.map((item, index) => (
-                <tr key={item.id}>
-                  <td>
-                    <Flex gap={"small"} wrap="nowrap">
-                      <Tooltip title={"Удалить"}>
-                        <CloseOutlined
-                          className={clsx("text-red")}
-                          onClick={() => removeDoc(item)}
-                        />
-                      </Tooltip>
-                      <Tooltip title={"Сохранить"}>
-                        <SaveOutlined
-                          className={clsx("text-blue")}
-                          onClick={() => saveDoc(item)}
-                        />
-                      </Tooltip>
-                    </Flex>
-                  </td>
-                  <td>{index + 1}</td>
-                  <td>
-                    <Input
-                      value={item.nameid}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditableDoc((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, nameid: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
+              {editableDoc?.length === 0 ? (
+                !selectedClinic ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <Empty
+                        description="Выберите клинику"
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      />
+                    </td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td colSpan={6}>
+                      <Empty
+                        description="Врачей в данной клинике пока нет"
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      />
+                    </td>
+                  </tr>
+                )
+              ) : (
+                editableDoc?.map((item, index) => (
+                  <tr key={item.codeid}>
+                    <td>
+                      <Flex gap={"small"} wrap="nowrap">
+                        <Tooltip title={"Удалить"}>
+                          <CloseOutlined
+                            className={clsx("text-red")}
+                            onClick={() => removeDoc(item)}
+                          />
+                        </Tooltip>
+                        <Tooltip title={"Сохранить"}>
+                          <SaveOutlined
+                            className={clsx("text-blue")}
+                            onClick={() => saveDoc(item)}
+                          />
+                        </Tooltip>
+                      </Flex>
+                    </td>
+                    <td>{index + 1}</td>
+                    <td>
+                      <Input
+                        value={item.nameid}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditableDoc((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, nameid: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
 
-                  <td>
-                    <Input
-                      value={item.phone}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditableDoc((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, phone: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
+                    <td>
+                      <Input
+                        value={item.phone}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditableDoc((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, phone: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
 
-                  <td>
-                    <Input
-                      value={item.login}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditableDoc((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, login: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      value={item.password}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditableDoc((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, password: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
+                    <td>
+                      <Input
+                        value={item.login}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditableDoc((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, login: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        value={item.password}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditableDoc((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, password: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </Flex>
@@ -247,6 +280,7 @@ export const DoctorsPage = () => {
           title={"врача"}
           open={openWar}
           onCancel={() => setOpenWar(false)}
+          onConfirm={onDeleteDoc}
         />
         <AddDocModal open={openAdd} onCancel={() => setOpenAdd(false)} />
         <EditDocModal

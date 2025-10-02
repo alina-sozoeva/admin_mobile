@@ -6,9 +6,10 @@ export const pharmacistsApi = createApi({
   tagTypes: ["PharmacistsList"],
   endpoints: (builder) => ({
     getPharmacists: builder.query({
-      query: () => ({
+      query: (pharmacy_codeid) => ({
         url: "/pharmacists",
         method: "GET",
+        params: pharmacy_codeid,
       }),
       providesTags: ["PharmacistsList"],
     }),
@@ -20,8 +21,19 @@ export const pharmacistsApi = createApi({
       }),
       invalidatesTags: ["PharmacistsList"],
     }),
+    deletePharmacist: builder.mutation({
+      query: (codeid) => ({
+        url: "/delete-pharmacist",
+        method: "POST",
+        body: codeid,
+      }),
+      invalidatesTags: ["PharmacistsList"],
+    }),
   }),
 });
 
-export const { useGetPharmacistsQuery, useAddPharmacistMutation } =
-  pharmacistsApi;
+export const {
+  useGetPharmacistsQuery,
+  useAddPharmacistMutation,
+  useDeletePharmacistMutation,
+} = pharmacistsApi;

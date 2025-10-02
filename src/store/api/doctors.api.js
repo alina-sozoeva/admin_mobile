@@ -6,9 +6,10 @@ export const doctorApi = createApi({
   tagTypes: ["DoctorsList"],
   endpoints: (builder) => ({
     getDoctors: builder.query({
-      query: () => ({
+      query: (clinic_codeid) => ({
         url: "/doctors",
         method: "GET",
+        params: clinic_codeid,
       }),
       providesTags: ["DoctorsList"],
     }),
@@ -17,6 +18,14 @@ export const doctorApi = createApi({
         url: "/create-doctor",
         method: "POST",
         body: newDoctor,
+      }),
+      invalidatesTags: ["DoctorsList"],
+    }),
+    deleteDoctor: builder.mutation({
+      query: (codeid) => ({
+        url: "/delete-doctor",
+        method: "POST",
+        body: codeid,
       }),
       invalidatesTags: ["DoctorsList"],
     }),
@@ -42,4 +51,5 @@ export const {
   useGetDoctorsQuery,
   useAddDoctorMutation,
   useLoginDoctorMutation,
+  useDeleteDoctorMutation,
 } = doctorApi;

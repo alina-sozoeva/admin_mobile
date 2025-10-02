@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { Flex, Input, Spin, Tooltip, Tree } from "antd";
+import { Empty, Flex, Input, Spin, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
-  EditOutlined,
   PlusOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
@@ -11,17 +10,21 @@ import {
 import { WarningModal } from "../../common";
 import { AddPharModal, EditPharModal } from "../../components";
 
-import styles from "./PharmaciesPage.module.scss";
-import clsx from "clsx";
 import {
   useAddPharmacistMutation,
+  useDeletePharmacistMutation,
   useGetPharmacistsQuery,
   useGetPharmacyQuery,
 } from "../../store";
+import { MdOutlineEdit } from "react-icons/md";
+
+import styles from "./PharmaciesPage.module.scss";
+import clsx from "clsx";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 export const PharmaciesPage = () => {
   const [editablePhars, setEditablePhars] = useState([]);
-  const [selectedPharmacy, setSelectedPharmacy] = useState("0");
+  const [selectedPharmacy, setSelectedPharmacy] = useState();
   const [openWar, setOpenWar] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -36,9 +39,12 @@ export const PharmaciesPage = () => {
     data: pharmacists,
     isLoading: isLoadingPharmacists,
     isFetching: isFetchingPharmacists,
-  } = useGetPharmacistsQuery();
+  } = useGetPharmacistsQuery(
+    selectedPharmacy ? { pharmacy_codeid: selectedPharmacy } : skipToken
+  );
 
   const [add] = useAddPharmacistMutation();
+  const [deletePhar] = useDeletePharmacistMutation();
 
   const onItem = (item) => {
     setItem(item);
@@ -46,18 +52,19 @@ export const PharmaciesPage = () => {
   };
 
   useEffect(() => {
-    if (pharmacists?.length > 0 && editablePhars?.length === 0) {
-      setEditablePhars(pharmacists.map((d) => ({ ...d, isNew: false })));
-    }
-  }, [pharmacists, editablePhars?.length]);
+    setEditablePhars(pharmacists?.map((d) => ({ ...d, isNew: false })) || []);
+  }, [pharmacists]);
 
   const treeData = pharmacies?.map((p) => ({
     title: (
-      <Flex className={clsx("gap-[5px]")}>
+      <Flex align="center" className={clsx("gap-[5px]")}>
         {p?.nameid}{" "}
-        <EditOutlined
+        <MdOutlineEdit
           className={clsx("text-blue ")}
-          onClick={() => onItem(p)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onItem(p);
+          }}
         />
       </Flex>
     ),
@@ -97,6 +104,7 @@ export const PharmaciesPage = () => {
       phone: item.phone,
       login: item.login,
       password: item.password,
+      pharmacy_codeid: selectedPharmacy,
     });
   };
 
@@ -104,13 +112,14 @@ export const PharmaciesPage = () => {
     if (item.isNew) {
       setEditablePhars((prev) => prev.filter((m) => m.codeid !== item.codeid));
     } else {
+      setItem(item);
       setOpenWar(true);
     }
   };
 
-  const dataSource = pharmacies?.filter(
-    (p) => p.pharmacyKey === selectedPharmacy
-  );
+  const onDeletePhar = () => {
+    deletePhar({ codeid: item.codeid });
+  };
 
   return (
     <Spin spinning={loading}>
@@ -129,7 +138,6 @@ export const PharmaciesPage = () => {
           <Tree
             showLine
             switcherIcon={<DownOutlined />}
-            defaultExpandedKeys={["0"]}
             onSelect={onSelect}
             treeData={treeData}
           />
@@ -155,90 +163,112 @@ export const PharmaciesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {editablePhars?.map((item) => (
-                <tr key={item.codeid}>
-                  <td>
-                    <Flex gap={"small"} wrap="nowrap">
-                      <Tooltip title={"Удалить"}>
-                        <CloseOutlined
-                          className={clsx("text-red")}
-                          onClick={() => removePhars(item)}
-                        />
-                      </Tooltip>
-                      <Tooltip title={"Сохранить"}>
-                        <SaveOutlined
-                          className={clsx("text-blue")}
-                          onClick={() => savePhars(item)}
-                        />
-                      </Tooltip>
-                    </Flex>
-                  </td>
-                  <td>
-                    <Input
-                      value={item.nameid}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditablePhars((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, nameid: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      value={item.phone}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditablePhars((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, phone: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      value={item.login}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditablePhars((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, login: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      value={item.password}
-                      className={clsx("w-full")}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditablePhars((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, password: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
+              {editablePhars?.length === 0 ? (
+                !selectedPharmacy ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <Empty
+                        description="Выберите аптеку"
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      />
+                    </td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td colSpan={6}>
+                      <Empty
+                        description="Фармацевтов в данной аптеке пока нет"
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      />
+                    </td>
+                  </tr>
+                )
+              ) : (
+                editablePhars?.map((item) => (
+                  <tr key={item.codeid}>
+                    <td>
+                      <Flex gap={"small"} wrap="nowrap">
+                        <Tooltip title={"Удалить"}>
+                          <CloseOutlined
+                            className={clsx("text-red")}
+                            onClick={() => removePhars(item)}
+                          />
+                        </Tooltip>
+                        <Tooltip title={"Сохранить"}>
+                          <SaveOutlined
+                            className={clsx("text-blue")}
+                            onClick={() => savePhars(item)}
+                          />
+                        </Tooltip>
+                      </Flex>
+                    </td>
+                    <td>
+                      <Input
+                        value={item.nameid}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditablePhars((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, nameid: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        value={item.phone}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditablePhars((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, phone: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        value={item.login}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditablePhars((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, login: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Input
+                        value={item.password}
+                        className={clsx("w-full")}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditablePhars((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, password: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </Flex>
@@ -246,6 +276,7 @@ export const PharmaciesPage = () => {
           title={"фармацевта"}
           open={openWar}
           onCancel={() => setOpenWar(false)}
+          onConfirm={onDeletePhar}
         />
         <AddPharModal open={openAdd} onCancel={() => setOpenAdd(false)} />
         <EditPharModal

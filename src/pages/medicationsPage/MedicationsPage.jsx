@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Flex, Input, Select, Spin, Tooltip, Tree } from "antd";
+import { Empty, Flex, Input, Select, Spin, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
@@ -16,66 +16,71 @@ import clsx from "clsx";
 
 import {
   useAddDrugMutation,
+  useDeleteDrugMutation,
   useGetDrugFormQuery,
   useGetDrugQuery,
   useGetGroupDrugQuery,
 } from "../../store";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { MdOutlineEdit } from "react-icons/md";
 
 export const MedicationsPage = () => {
   const [editableMeds, setEditableMeds] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState("0");
+  const [selectedGroup, setSelectedGroup] = useState();
   const [open, setOpen] = useState(false);
   const [addMed, setAddMed] = useState(false);
   const [editMed, setEditMed] = useState(false);
   const [item, setItem] = useState();
 
   const {
-    data: drugs = [],
+    data: drugs,
     isLoading: isLoadingDrugs,
     isFetching: isFetchingDrugs,
-  } = useGetDrugQuery({});
+  } = useGetDrugQuery(
+    selectedGroup ? { group_codeid: selectedGroup } : skipToken
+  );
   const {
-    data: groupDrugs = [],
+    data: groupDrugs,
     isLoading: isLoadingGroupDrugs,
     isFetching: isFetchingGroupDrugs,
   } = useGetGroupDrugQuery();
   const {
-    data: drugForm = [],
+    data: drugForm,
     isLoading: isLoadingDrugForm,
     isFetching: isFetchingDrugForm,
   } = useGetDrugFormQuery();
 
   const [addDrugMutation] = useAddDrugMutation();
+  const [deleteDrug] = useDeleteDrugMutation();
 
   useEffect(() => {
-    if (drugs?.length > 0 && editableMeds?.length === 0) {
-      setEditableMeds(drugs.map((d) => ({ ...d, isNew: false })));
-    }
-  }, [drugs, editableMeds?.length]);
+    setEditableMeds(drugs?.map((d) => ({ ...d, isNew: false })) || []);
+  }, [drugs]);
 
   const mappedDrugForm = useMemo(
     () =>
-      drugForm.map((item) => ({
+      drugForm?.map((item) => ({
         value: item.codeid,
         label: item.nameid,
       })),
     [drugForm]
   );
 
-  const treeData = groupDrugs.map((g) => ({
+  const treeData = groupDrugs?.map((g) => ({
     title: (
-      <Flex className={clsx("gap-[5px]")}>
+      <Flex align="center" className={clsx("gap-[5px]")}>
         {g.nameid}{" "}
-        <EditOutlined
-          className={clsx("text-blue")}
-          onClick={() => {
+        <MdOutlineEdit
+          className={clsx("text-blue ")}
+          onClick={(e) => {
+            e.stopPropagation();
             setItem(g);
             setEditMed(true);
           }}
         />
       </Flex>
     ),
-    key: g.codeid,
+    key: g?.codeid,
   }));
 
   const loading =
@@ -107,6 +112,7 @@ export const MedicationsPage = () => {
       codeid: item.isNew ? 0 : item.codeid,
       nameid: item.nameid,
       drug_form_codeid: item.drug_form_codeid,
+      group_codeid: selectedGroup,
     });
   };
 
@@ -114,13 +120,14 @@ export const MedicationsPage = () => {
     if (item.isNew) {
       setEditableMeds((prev) => prev.filter((m) => m.codeid !== item.codeid));
     } else {
+      setItem(item);
       setOpen(true);
     }
   };
 
-  const filteredMeds = editableMeds?.filter(
-    (m) => m.groupKey === selectedGroup || m.isNew
-  );
+  const onDeleteDrug = () => {
+    deleteDrug({ codeid: item.codeid });
+  };
 
   return (
     <Spin spinning={loading}>
@@ -163,56 +170,78 @@ export const MedicationsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {editableMeds?.map((item) => (
-                <tr key={item?.codeid}>
-                  <td>
-                    <Flex gap="small">
-                      <Tooltip title="Удалить">
-                        <CloseOutlined
-                          className="text-red"
-                          onClick={() => removeMed(item)}
-                        />
-                      </Tooltip>
-                      <Tooltip title="Сохранить">
-                        <SaveOutlined
-                          className="text-blue"
-                          onClick={() => saveMed(item)}
-                        />
-                      </Tooltip>
-                    </Flex>
-                  </td>
-                  <td>
-                    <Input
-                      value={item.nameid}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setEditableMeds((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, nameid: newValue }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <Select
-                      value={item.drug_form_codeid}
-                      options={mappedDrugForm}
-                      onChange={(value) => {
-                        setEditableMeds((prev) =>
-                          prev.map((m) =>
-                            m.codeid === item.codeid
-                              ? { ...m, drug_form_codeid: value }
-                              : m
-                          )
-                        );
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
+              {editableMeds?.length === 0 ? (
+                !selectedGroup ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <Empty
+                        description="Выберите группу медикаментов"
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      />
+                    </td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td colSpan={6}>
+                      <Empty
+                        description="Медикаментов в данной группе пока нет"
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      />
+                    </td>
+                  </tr>
+                )
+              ) : (
+                editableMeds?.map((item) => (
+                  <tr key={item?.codeid}>
+                    <td>
+                      <Flex gap="small">
+                        <Tooltip title="Удалить">
+                          <CloseOutlined
+                            className="text-red"
+                            onClick={() => removeMed(item)}
+                          />
+                        </Tooltip>
+                        <Tooltip title="Сохранить">
+                          <SaveOutlined
+                            className="text-blue"
+                            onClick={() => saveMed(item)}
+                          />
+                        </Tooltip>
+                      </Flex>
+                    </td>
+                    <td>
+                      <Input
+                        value={item.nameid}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setEditableMeds((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, nameid: newValue }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <Select
+                        value={item.drug_form_codeid}
+                        options={mappedDrugForm}
+                        onChange={(value) => {
+                          setEditableMeds((prev) =>
+                            prev.map((m) =>
+                              m.codeid === item.codeid
+                                ? { ...m, drug_form_codeid: value }
+                                : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </Flex>
@@ -221,6 +250,7 @@ export const MedicationsPage = () => {
           title="медикамент"
           open={open}
           onCancel={() => setOpen(false)}
+          onConfirm={onDeleteDrug}
         />
         <MedModal open={addMed} onCancel={() => setAddMed(false)} />
         <EditModal

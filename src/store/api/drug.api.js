@@ -6,10 +6,10 @@ export const drugApi = createApi({
   tagTypes: ["DrugList", "DrugGroupList"],
   endpoints: (builder) => ({
     getDrug: builder.query({
-      query: (search) => ({
+      query: (group_codeid) => ({
         url: "/drug",
         method: "GET",
-        params: search,
+        params: group_codeid,
       }),
       providesTags: ["DrugList"],
     }),
@@ -36,6 +36,14 @@ export const drugApi = createApi({
       }),
       invalidatesTags: ["DrugGroupList"],
     }),
+    deleteDrug: builder.mutation({
+      query: (codeid) => ({
+        url: "/delete-drug",
+        method: "POST",
+        body: codeid,
+      }),
+      invalidatesTags: ["DrugList"],
+    }),
   }),
 });
 
@@ -44,4 +52,5 @@ export const {
   useGetGroupDrugQuery,
   useAddGroupDrugMutation,
   useAddDrugMutation,
+  useDeleteDrugMutation,
 } = drugApi;
