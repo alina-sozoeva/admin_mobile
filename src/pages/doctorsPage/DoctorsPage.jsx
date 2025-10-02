@@ -3,6 +3,7 @@ import { Flex, Form, Input, Select, Tooltip, Tree } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
+  EditOutlined,
   PlusOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
@@ -10,14 +11,15 @@ import styles from "./DoctorsPage.module.scss";
 import clsx from "clsx";
 import { WarningModal } from "../../common";
 import { useForm } from "antd/es/form/Form";
+import { AddDocModal, EditDocModal } from "../../components";
 
 export const DoctorsPage = () => {
   const [form] = useForm();
 
   const clinics = [
-    { key: "0", title: "Клиника 1" },
-    { key: "1", title: "Клиника 2" },
-    { key: "2", title: "Клиника 3" },
+    { key: "0", nameid: "Клиника 1", adress: "Клиника 1 test", phone: "000" },
+    { key: "1", nameid: "Клиника 2", adress: "Клиника 2 test", phone: "000" },
+    { key: "2", nameid: "Клиника 3", adress: "Клиника 3 test", phone: "000" },
   ];
 
   const allDoctors = [
@@ -60,9 +62,28 @@ export const DoctorsPage = () => {
   ];
 
   const [selectedClinic, setSelectedClinic] = useState("0");
-  const [open, setOpen] = useState(false);
+  const [openWar, setOpenWar] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [item, setItem] = useState();
 
-  const treeData = clinics.map((c) => ({ title: c.title, key: c.key }));
+  const onItem = (item) => {
+    setItem(item);
+    setOpenEdit(true);
+  };
+
+  const treeData = clinics.map((c) => ({
+    title: (
+      <Flex className={clsx("gap-[5px]")}>
+        {c.nameid}{" "}
+        <EditOutlined
+          className={clsx("text-blue ")}
+          onClick={() => onItem(c)}
+        />
+      </Flex>
+    ),
+    key: c.key,
+  }));
 
   const onSelect = (selectedKeys) => {
     if (selectedKeys.length > 0) {
@@ -88,7 +109,7 @@ export const DoctorsPage = () => {
           <Tooltip title={"Добавить клинику"}>
             <PlusOutlined
               className={clsx("text-blue text-center")}
-              onClick={() => setAddClinic(true)}
+              onClick={() => setOpenAdd(true)}
             />
           </Tooltip>
         </Flex>
@@ -167,7 +188,7 @@ export const DoctorsPage = () => {
                     <Tooltip title={"Удалить"}>
                       <CloseOutlined
                         className={clsx("text-red")}
-                        onClick={() => setOpen(true)}
+                        onClick={() => setOpenWar(true)}
                       />
                     </Tooltip>
                     <Tooltip title={"Сохранить"}>
@@ -200,8 +221,14 @@ export const DoctorsPage = () => {
 
       <WarningModal
         title={"врача"}
-        open={open}
-        onCancel={() => setOpen(false)}
+        open={openWar}
+        onCancel={() => setOpenWar(false)}
+      />
+      <AddDocModal open={openAdd} onCancel={() => setOpenAdd(false)} />
+      <EditDocModal
+        open={openEdit}
+        onCancel={() => setOpenEdit(false)}
+        item={item}
       />
     </main>
   );
