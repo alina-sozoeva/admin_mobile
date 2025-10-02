@@ -12,7 +12,16 @@ export const pharmacistsApi = createApi({
       }),
       providesTags: ["PharmacistsList"],
     }),
+    addPharmacist: builder.mutation({
+      query: (newPharmacist) => ({
+        url: "/create-pharmacist",
+        method: "POST",
+        body: newPharmacist,
+      }),
+      invalidatesTags: ["PharmacistsList"],
+    }),
   }),
 });
 
-export const { useGetPharmacistsQuery } = pharmacistsApi;
+export const { useGetPharmacistsQuery, useAddPharmacistMutation } =
+  pharmacistsApi;

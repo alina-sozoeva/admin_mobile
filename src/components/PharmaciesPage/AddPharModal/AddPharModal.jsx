@@ -4,16 +4,24 @@ import { useForm } from "antd/es/form/Form";
 import styles from "./AddPharModal.module.scss";
 import clsx from "clsx";
 import { PlusOutlined } from "@ant-design/icons";
+import { useAddPharmacyMutation } from "../../../store";
 
 export const AddPharModal = ({ open, onCancel }) => {
   const [form] = useForm();
+
+  const [add] = useAddPharmacyMutation();
 
   const onReset = () => {
     onCancel();
     form.resetFields();
   };
 
-  const onFinish = () => {
+  const onFinish = (values) => {
+    add({
+      nameid: values.nameid,
+      address: values.address,
+      phone: values.phone,
+    });
     onReset();
   };
 
@@ -30,7 +38,7 @@ export const AddPharModal = ({ open, onCancel }) => {
           <Input />
         </Form.Item>
 
-        <Form.Item name="adress" label="Адрес">
+        <Form.Item name="address" label="Адрес">
           <Input />
         </Form.Item>
 

@@ -4,19 +4,25 @@ import { useForm } from "antd/es/form/Form";
 import styles from "./EditModal.module.scss";
 import clsx from "clsx";
 import { useEffect } from "react";
+import { useAddGroupDrugMutation } from "../../../store";
 
 export const EditModal = ({ open, onCancel, item }) => {
   const [form] = useForm();
 
-  console.log(item, "item");
+  const [edit] = useAddGroupDrugMutation();
 
-  const onFinish = () => {
+  const onFinish = (values) => {
+    edit({
+      codeid: item?.codeid,
+      nameid: values?.nameid,
+    });
     onCancel();
   };
 
   useEffect(() => {
     if (item) {
       form.setFieldsValue({
+        codeid: item?.codeid,
         nameid: item?.nameid,
       });
     }
@@ -31,7 +37,7 @@ export const EditModal = ({ open, onCancel, item }) => {
         className={clsx(styles.form, "flex flex-col ")}
         onFinish={onFinish}
       >
-        <Form.Item name="login" label="Наименование">
+        <Form.Item name="nameid" label="Наименование">
           <Input />
         </Form.Item>
         <Flex className={clsx("pt-2 gap-[3px] items-center justify-center")}>

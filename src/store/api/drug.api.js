@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const drugApi = createApi({
   reducerPath: "drugApi",
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_MAIN_URL }),
-  tagTypes: ["DrugList"],
+  tagTypes: ["DrugList", "DrugGroupList"],
   endpoints: (builder) => ({
     getDrug: builder.query({
       query: (search) => ({
@@ -13,6 +13,13 @@ export const drugApi = createApi({
       }),
       providesTags: ["DrugList"],
     }),
+    getGroupDrug: builder.query({
+      query: () => ({
+        url: "/group-drug",
+        method: "GET",
+      }),
+      providesTags: ["DrugGroupList"],
+    }),
     addDrug: builder.mutation({
       query: (newDrug) => ({
         url: "/drug",
@@ -21,7 +28,20 @@ export const drugApi = createApi({
       }),
       invalidatesTags: ["DrugList"],
     }),
+    addGroupDrug: builder.mutation({
+      query: (newDrug) => ({
+        url: "/group-drug",
+        method: "POST",
+        body: newDrug,
+      }),
+      invalidatesTags: ["DrugGroupList"],
+    }),
   }),
 });
 
-export const { useGetDrugQuery, useAddDrugMutation } = drugApi;
+export const {
+  useGetDrugQuery,
+  useGetGroupDrugQuery,
+  useAddGroupDrugMutation,
+  useAddDrugMutation,
+} = drugApi;

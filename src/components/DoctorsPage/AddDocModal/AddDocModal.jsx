@@ -4,16 +4,24 @@ import { useForm } from "antd/es/form/Form";
 import styles from "./AddDocModal.module.scss";
 import clsx from "clsx";
 import { PlusOutlined } from "@ant-design/icons";
+import { useAddСlinicsMutation } from "../../../store";
 
 export const AddDocModal = ({ open, onCancel }) => {
   const [form] = useForm();
+
+  const [add] = useAddСlinicsMutation();
 
   const onReset = () => {
     onCancel();
     form.resetFields();
   };
 
-  const onFinish = () => {
+  const onFinish = (values) => {
+    add({
+      nameid: values.nameid,
+      adress: values.adress,
+      phone: values.phone,
+    });
     onReset();
   };
 

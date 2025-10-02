@@ -6,22 +6,32 @@ import { PlusOutlined } from "@ant-design/icons";
 import styles from "./EditPharModal.module.scss";
 import clsx from "clsx";
 import { useEffect } from "react";
+import { useAddPharmacyMutation } from "../../../store";
 
 export const EditPharModal = ({ open, onCancel, item }) => {
   const [form] = useForm();
+
+  const [edit] = useAddPharmacyMutation();
 
   const onReset = () => {
     onCancel();
     form.resetFields();
   };
 
-  const onFinish = () => {
+  const onFinish = (values) => {
+    edit({
+      guid: item?.guid,
+      nameid: values?.nameid,
+      address: values?.address,
+      phone: values?.phone,
+    });
     onReset();
   };
 
   useEffect(() => {
     if (item) {
       form.setFieldsValue({
+        guid: item?.guid,
         nameid: item?.nameid,
         address: item?.address,
         phone: item?.phone,
@@ -56,8 +66,7 @@ export const EditPharModal = ({ open, onCancel, item }) => {
             )}
             type="submit"
           >
-            <PlusOutlined />
-            Добавить
+            Обновить
           </button>
         </Flex>
       </Form>

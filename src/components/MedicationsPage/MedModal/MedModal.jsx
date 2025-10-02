@@ -3,11 +3,16 @@ import { useForm } from "antd/es/form/Form";
 
 import styles from "./MedModal.module.scss";
 import clsx from "clsx";
+import { useAddGroupDrugMutation } from "../../../store";
 
 export const MedModal = ({ open, onCancel }) => {
   const [form] = useForm();
+  const [add] = useAddGroupDrugMutation();
 
-  const onFinish = () => {
+  const onFinish = (values) => {
+    add({
+      nameid: values.nameid,
+    });
     onCancel();
   };
 
@@ -20,7 +25,7 @@ export const MedModal = ({ open, onCancel }) => {
         className={clsx(styles.form, "flex flex-col ")}
         onFinish={onFinish}
       >
-        <Form.Item name="login" label="Наименование">
+        <Form.Item name="nameid" label="Наименование">
           <Input />
         </Form.Item>
         <Flex className={clsx("pt-2 gap-[3px] items-center justify-center")}>

@@ -6,22 +6,32 @@ import { PlusOutlined } from "@ant-design/icons";
 import styles from "./EditDocModal.module.scss";
 import clsx from "clsx";
 import { useEffect } from "react";
+import { useAddСlinicsMutation } from "../../../store";
 
 export const EditDocModal = ({ open, onCancel, item }) => {
   const [form] = useForm();
+
+  const [edit] = useAddСlinicsMutation();
 
   const onReset = () => {
     onCancel();
     form.resetFields();
   };
 
-  const onFinish = () => {
+  const onFinish = (values) => {
+    edit({
+      codeid: item?.codeid,
+      nameid: values?.nameid,
+      adress: values?.adress,
+      phone: values?.phone,
+    });
     onReset();
   };
 
   useEffect(() => {
     if (item) {
       form.setFieldsValue({
+        codeid: item?.codeid,
         nameid: item?.nameid,
         adress: item?.adress,
         phone: item?.phone,
@@ -56,8 +66,7 @@ export const EditDocModal = ({ open, onCancel, item }) => {
             )}
             type="submit"
           >
-            <PlusOutlined />
-            Добавить
+            Обновить
           </button>
         </Flex>
       </Form>

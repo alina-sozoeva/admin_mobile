@@ -15,7 +15,7 @@
 
   thead {
     position: sticky;
-    top: 0;
+    top: -1px;
     background: #f0f0f0;
     z-index: 1;
   }
@@ -23,7 +23,7 @@
   th,
   td {
     padding: 0 4px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid #eee;
     text-align: left;
   }
 

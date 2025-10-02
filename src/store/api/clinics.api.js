@@ -13,7 +13,15 @@ export const clinicsApi = createApi({
       }),
       providesTags: ["ClinicsList"],
     }),
+    addСlinics: builder.mutation({
+      query: (newСlinic) => ({
+        url: "/create-clinics",
+        method: "POST",
+        body: newСlinic,
+      }),
+      invalidatesTags: ["ClinicsList"],
+    }),
   }),
 });
 
-export const { useGetClinicsQuery } = clinicsApi;
+export const { useGetClinicsQuery, useAddСlinicsMutation } = clinicsApi;

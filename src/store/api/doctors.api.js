@@ -13,6 +13,14 @@ export const doctorApi = createApi({
       providesTags: ["DoctorsList"],
     }),
     addDoctor: builder.mutation({
+      query: (newDoctor) => ({
+        url: "/create-doctor",
+        method: "POST",
+        body: newDoctor,
+      }),
+      invalidatesTags: ["DoctorsList"],
+    }),
+    loginDoctor: builder.mutation({
       query: (doc) => ({
         url: "/login-doctor",
         method: "POST",
@@ -30,4 +38,8 @@ export const doctorApi = createApi({
   }),
 });
 
-export const { useGetDoctorsQuery, useAddDoctorMutation } = doctorApi;
+export const {
+  useGetDoctorsQuery,
+  useAddDoctorMutation,
+  useLoginDoctorMutation,
+} = doctorApi;
