@@ -38,12 +38,12 @@ const menuKeys = [
   //   icon: <FaRegHospital />,
   // },
 
-  {
-    key: "2",
-    label: pageName.users,
-    path: pathName.users,
-    icon: <PiUserCirclePlusThin />,
-  },
+  // {
+  //   key: "2",
+  //   label: pageName.users,
+  //   path: pathName.users,
+  //   icon: <PiUserCirclePlusThin />,
+  // },
   {
     key: "5",
     label: pageName.patients,
